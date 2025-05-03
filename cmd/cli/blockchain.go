@@ -1,12 +1,10 @@
-package cli
+package main
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -129,7 +127,7 @@ func newBlockchainMineCmd() *cobra.Command {
 			fmt.Printf("Index: %v\n", data["index"])
 			fmt.Printf("Hash: %s\n", data["hash"])
 			fmt.Printf("Documents: %v\n", data["documents"])
-			
+
 			// Format timestamp
 			if timestamp, ok := data["timestamp"].(float64); ok {
 				t := time.Unix(int64(timestamp), 0)
@@ -137,7 +135,7 @@ func newBlockchainMineCmd() *cobra.Command {
 			} else {
 				fmt.Printf("Timestamp: %v\n", data["timestamp"])
 			}
-			
+
 			fmt.Printf("Merkle Root: %s\n", data["merkleRoot"])
 			fmt.Printf("Nonce: %v\n", data["nonce"])
 
@@ -191,23 +189,23 @@ func newBlockchainBlocksCmd() *cobra.Command {
 
 			// Print the blocks
 			fmt.Printf("Total Blocks: %d\n\n", len(data))
-			
+
 			for i, blockData := range data {
 				block, ok := blockData.(map[string]interface{})
 				if !ok {
 					continue
 				}
-				
+
 				fmt.Printf("Block #%d:\n", i)
 				fmt.Printf("  Index: %v\n", block["index"])
-				
+
 				// Format hash to show beginning and end if too long
 				hash := fmt.Sprintf("%v", block["hash"])
 				if len(hash) > 20 && !verbose {
 					hash = hash[:10] + "..." + hash[len(hash)-10:]
 				}
 				fmt.Printf("  Hash: %s\n", hash)
-				
+
 				// Format timestamp
 				if timestamp, ok := block["timestamp"].(float64); ok {
 					t := time.Unix(int64(timestamp), 0)
@@ -215,11 +213,11 @@ func newBlockchainBlocksCmd() *cobra.Command {
 				} else {
 					fmt.Printf("  Timestamp: %v\n", block["timestamp"])
 				}
-				
+
 				// Count documents
 				if documents, ok := block["documents"].([]interface{}); ok {
 					fmt.Printf("  Documents: %d\n", len(documents))
-					
+
 					// Show document details in verbose mode
 					if verbose && len(documents) > 0 {
 						fmt.Println("  Document IDs:")
@@ -232,14 +230,14 @@ func newBlockchainBlocksCmd() *cobra.Command {
 						}
 					}
 				}
-				
+
 				if verbose {
 					fmt.Printf("  Previous Hash: %s\n", block["prevHash"])
 					fmt.Printf("  Merkle Root: %s\n", block["merkleRoot"])
 					fmt.Printf("  Nonce: %v\n", block["nonce"])
 					fmt.Printf("  Difficulty: %v\n", block["difficulty"])
 				}
-				
+
 				fmt.Println()
 			}
 
@@ -300,7 +298,7 @@ func newBlockchainBlockCmd() *cobra.Command {
 			fmt.Printf("Index: %v\n", block["index"])
 			fmt.Printf("Hash: %s\n", block["hash"])
 			fmt.Printf("Previous Hash: %s\n", block["prevHash"])
-			
+
 			// Format timestamp
 			if timestamp, ok := block["timestamp"].(float64); ok {
 				t := time.Unix(int64(timestamp), 0)
@@ -308,26 +306,26 @@ func newBlockchainBlockCmd() *cobra.Command {
 			} else {
 				fmt.Printf("Timestamp: %v\n", block["timestamp"])
 			}
-			
+
 			fmt.Printf("Merkle Root: %s\n", block["merkleRoot"])
 			fmt.Printf("Nonce: %v\n", block["nonce"])
 			fmt.Printf("Difficulty: %v\n", block["difficulty"])
-			
+
 			// Display documents
 			if documents, ok := block["documents"].([]interface{}); ok {
 				fmt.Printf("\nDocuments (%d):\n", len(documents))
-				
+
 				for i, docData := range documents {
 					doc, ok := docData.(map[string]interface{})
 					if !ok {
 						continue
 					}
-					
+
 					fmt.Printf("\nDocument #%d:\n", i+1)
 					fmt.Printf("  ID: %s\n", doc["id"])
 					fmt.Printf("  Content Hash: %s\n", doc["content"])
 					fmt.Printf("  Signed By: %s\n", doc["signedBy"])
-					
+
 					// Format timestamp
 					if timestamp, ok := doc["timestamp"].(float64); ok {
 						t := time.Unix(int64(timestamp), 0)
@@ -386,24 +384,24 @@ func newBlockchainPendingCmd() *cobra.Command {
 
 			// Print the pending documents
 			fmt.Printf("Pending Documents: %d\n\n", len(data))
-			
+
 			if len(data) == 0 {
 				fmt.Println("No pending documents.")
 				fmt.Println("Use 'blockchain-cli document sign' to sign a document.")
 				return nil
 			}
-			
+
 			for i, docData := range data {
 				doc, ok := docData.(map[string]interface{})
 				if !ok {
 					continue
 				}
-				
+
 				fmt.Printf("Document #%d:\n", i+1)
 				fmt.Printf("  ID: %s\n", doc["id"])
 				fmt.Printf("  Content Hash: %s\n", doc["content"])
 				fmt.Printf("  Signed By: %s\n", doc["signedBy"])
-				
+
 				// Format timestamp
 				if timestamp, ok := doc["timestamp"].(float64); ok {
 					t := time.Unix(int64(timestamp), 0)
@@ -411,10 +409,10 @@ func newBlockchainPendingCmd() *cobra.Command {
 				} else {
 					fmt.Printf("  Timestamp: %v\n", doc["timestamp"])
 				}
-				
+
 				fmt.Println()
 			}
-			
+
 			fmt.Println("Use 'blockchain-cli blockchain mine' to mine these documents into a new block.")
 
 			return nil
@@ -465,7 +463,7 @@ func newBlockchainValidateCmd() *cobra.Command {
 
 			// Print the validation result
 			isValid, _ := data["isValid"].(bool)
-			
+
 			if isValid {
 				fmt.Println("✅ Blockchain is valid!")
 				fmt.Println("The blockchain integrity is intact. All blocks and signatures are valid.")

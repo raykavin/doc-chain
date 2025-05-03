@@ -1,0 +1,13 @@
+services:
+  docchain:
+    image: mcr.microsoft.com/devcontainers/go:1-1.24-bookworm
+    container_name: docchain_dev
+    working_dir: /go/src/docchain
+    volumes:
+      - ./:/go/src/docchain
+      - ./.docker/go/bin:/go/bin
+      - ./.docker/go/pkg:/go/pkg
+    environment:
+      - TZ=America/Belem
+    tty: true
+    restart: on-failure

@@ -1,4 +1,4 @@
-package cli
+package main
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ This CLI allows you to create wallets, sign documents, mine blocks, and more.`,
 	// Global flags
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.blockchain-cli.yaml)")
 	rootCmd.PersistentFlags().StringVar(&apiURL, "api-url", "http://localhost:8080/api", "blockchain API URL")
-	
+
 	// Bind flags to viper
 	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
 

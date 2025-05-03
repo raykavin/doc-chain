@@ -1,17 +1,14 @@
-package cli
+package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 
+	"github.com/raykavin/doc-chain/internal/dto"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/raykavin/docchain/internal/models"
 )
 
 func newWalletCmd() *cobra.Command {
@@ -54,7 +51,7 @@ func newWalletCreateCmd() *cobra.Command {
 			}
 
 			// Parse the response
-			var response models.BlockchainResponse
+			var response dto.BlockchainResponse
 			if err := json.Unmarshal(body, &response); err != nil {
 				return fmt.Errorf("failed to parse response: %w", err)
 			}
@@ -74,7 +71,7 @@ func newWalletCreateCmd() *cobra.Command {
 			fmt.Println("Wallet created successfully!")
 			fmt.Printf("ID: %s\n", data["id"])
 			fmt.Printf("Public Key: %s\n", data["publicKey"])
-			
+
 			// Save the wallet to a file if requested
 			if outputFile != "" {
 				walletData, err := json.MarshalIndent(data, "", "  ")
@@ -127,7 +124,7 @@ func newWalletInfoCmd() *cobra.Command {
 			}
 
 			// Parse the response
-			var response models.BlockchainResponse
+			var response dto.BlockchainResponse
 			if err := json.Unmarshal(body, &response); err != nil {
 				return fmt.Errorf("failed to parse response: %w", err)
 			}
@@ -179,7 +176,7 @@ func newWalletExportCmd() *cobra.Command {
 			}
 
 			// Parse the response
-			var response models.BlockchainResponse
+			var response dto.BlockchainResponse
 			if err := json.Unmarshal(body, &response); err != nil {
 				return fmt.Errorf("failed to parse response: %w", err)
 			}

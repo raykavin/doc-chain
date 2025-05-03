@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/raykavin/docchain/internal/server"
+	"github.com/raykavin/doc-chain/internal/server"
 )
 
 func main() {

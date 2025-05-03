@@ -1,4 +1,4 @@
-package cli
+package main
 
 import (
 	"bytes"
@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -29,7 +28,7 @@ func newDocumentCmd() *cobra.Command {
 
 func newDocumentSignCmd() *cobra.Command {
 	var (
-		content   string
+		content     string
 		contentFile string
 		keyFile     string
 	)
@@ -129,7 +128,7 @@ func newDocumentSignCmd() *cobra.Command {
 			fmt.Println("Document signed successfully!")
 			fmt.Printf("Document ID: %s\n", data["documentId"])
 			fmt.Printf("Signed By: %s\n", data["signedBy"])
-			
+
 			// Convert timestamp to a readable format
 			if timestampStr, ok := data["timestamp"].(string); ok {
 				timestamp, err := time.Parse(time.RFC3339, timestampStr)
@@ -203,7 +202,7 @@ func newDocumentGetCmd() *cobra.Command {
 			fmt.Printf("Document ID: %s\n", data["id"])
 			fmt.Printf("Content Hash: %s\n", data["content"])
 			fmt.Printf("Signed By: %s\n", data["signedBy"])
-			
+
 			// Get timestamp as int or string and format it
 			if timestamp, ok := data["timestamp"].(float64); ok {
 				t := time.Unix(int64(timestamp), 0)
@@ -271,16 +270,16 @@ func newDocumentVerifyCmd() *cobra.Command {
 
 			// Print the verification result
 			isValid, _ := data["isValid"].(bool)
-			
+
 			if isValid {
 				fmt.Println("✅ Document signature is VALID")
 			} else {
 				fmt.Println("❌ Document signature is INVALID")
 			}
-			
+
 			fmt.Printf("Document ID: %s\n", data["documentId"])
 			fmt.Printf("Signed By: %s\n", data["signedBy"])
-			
+
 			// Get timestamp as int or string and format it
 			if timestamp, ok := data["timestamp"].(float64); ok {
 				t := time.Unix(int64(timestamp), 0)

@@ -5,16 +5,16 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/raykavin/docchain/internal/crypto"
+	"github.com/raykavin/doc-chain/internal/crypto"
 )
 
 // Document represents a signed document in the blockchain
 type Document struct {
-	ID        string          `json:"id"`
-	Content   string          `json:"content"` // This would be a hash of the actual document
+	ID        string            `json:"id"`
+	Content   string            `json:"content"` // This would be a hash of the actual document
 	Signature *crypto.Signature `json:"signature"`
-	SignedBy  string          `json:"signedBy"` // Public key of the signer
-	Timestamp int64           `json:"timestamp"`
+	SignedBy  string            `json:"signedBy"` // Public key of the signer
+	Timestamp int64             `json:"timestamp"`
 }
 
 // NewDocument creates a new document with the provided content
@@ -56,8 +56,8 @@ func (d *Document) GetContentHashString() string {
 // CreateGenesisDocument creates a genesis document for the blockchain
 func CreateGenesisDocument() *Document {
 	return &Document{
-		ID:        "genesis",
-		Content:   "genesis_document",
+		ID:      "genesis",
+		Content: "genesis_document",
 		Signature: &crypto.Signature{
 			R: crypto.NewBigInt(0),
 			S: crypto.NewBigInt(0),

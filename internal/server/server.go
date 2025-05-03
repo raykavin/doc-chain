@@ -7,8 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/raykavin/docchain/internal/blockchain"
-	"github.com/raykavin/docchain/internal/crypto"
+	"github.com/raykavin/doc-chain/internal/blockchain"
+	"github.com/raykavin/doc-chain/internal/crypto"
 )
 
 // Server represents the blockchain API server
