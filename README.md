@@ -205,7 +205,7 @@ Response:
 
 ## 🤝 Contributing
 
-Contributions to BackNRun are welcome! Here are some ways you can contribute:
+Contributions to DocChain are welcome! Here are some ways you can contribute:
 
 1. Report bugs and suggest features by opening issues
 2. Submit pull requests with bug fixes or new features
@@ -216,7 +216,7 @@ Contributions to BackNRun are welcome! Here are some ways you can contribute:
 
 MIT License © [Raykavin Meireles](https://github.com/raykavin)
 
-BackNRun is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
+DocChain is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
 
 ---
 ## 📬 Contact
