@@ -35,21 +35,43 @@ func (s *Server) Configure() {
 	walletHandlers := &WalletHandlers{server: s}
 	documentHandlers := &DocumentHandlers{server: s}
 	blockchainHandlers := &BlockchainHandlers{server: s}
+	icpbrasilHandlers := &ICPBrasilHandlers{server: s}
+
+	// Serve static files
+	fs := http.FileServer(http.Dir("./static"))
 	
+	// Serve index.html for the root path and other static files
+	s.Router.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Don't serve static files for API routes
+		if len(r.URL.Path) >= 4 && r.URL.Path[:4] == "/api" {
+			http.NotFound(w, r)
+			return
+		}
+		
+		// Special handling for root path
+		if r.URL.Path == "/" {
+			http.ServeFile(w, r, "./static/index.html")
+			return
+		}
+		
+		// Try to serve the requested file
+		fs.ServeHTTP(w, r)
+	})
+
 	// Create a subrouter for API endpoints
 	apiRouter := s.Router.PathPrefix("/api").Subrouter()
-	
+
 	// Wallet routes
 	walletRouter := apiRouter.PathPrefix("/wallet").Subrouter()
 	walletRouter.HandleFunc("/new", walletHandlers.CreateWallet).Methods("POST")
 	walletRouter.HandleFunc("/{id}", walletHandlers.GetWallet).Methods("GET")
-	
+
 	// Document routes
 	documentRouter := apiRouter.PathPrefix("/document").Subrouter()
 	documentRouter.HandleFunc("/sign", documentHandlers.SignDocument).Methods("POST")
 	documentRouter.HandleFunc("/{id}", documentHandlers.GetDocument).Methods("GET")
 	documentRouter.HandleFunc("/verify/{id}", documentHandlers.VerifyDocument).Methods("GET")
-	
+
 	// Blockchain routes
 	blockchainRouter := apiRouter.PathPrefix("/blockchain").Subrouter()
 	blockchainRouter.HandleFunc("", blockchainHandlers.GetBlockchainInfo).Methods("GET")
@@ -58,6 +80,14 @@ func (s *Server) Configure() {
 	blockchainRouter.HandleFunc("/block/{hash}", blockchainHandlers.GetBlockByHash).Methods("GET")
 	blockchainRouter.HandleFunc("/pending", blockchainHandlers.GetPendingDocuments).Methods("GET")
 	blockchainRouter.HandleFunc("/validate", blockchainHandlers.ValidateChain).Methods("GET")
+
+	// ICP-Brasil routes
+	icpbrasilRouter := apiRouter.PathPrefix("/icpbrasil").Subrouter()
+	icpbrasilRouter.HandleFunc("/sign", icpbrasilHandlers.SignDocument).Methods("POST")
+	icpbrasilRouter.HandleFunc("/verify", icpbrasilHandlers.VerifySignature).Methods("POST")
+	icpbrasilRouter.HandleFunc("/cert-info", icpbrasilHandlers.GetCertificateInfo).Methods("POST")
+	icpbrasilRouter.HandleFunc("/check-revocation", icpbrasilHandlers.CheckRevocation).Methods("POST")
+	icpbrasilRouter.HandleFunc("/document/{id}", icpbrasilHandlers.GetDocumentInfo).Methods("GET")
 	
 	// Apply middleware
 	s.Router.Use(LoggingMiddleware)

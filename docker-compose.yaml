@@ -9,5 +9,17 @@ services:
       - ./.docker/go/pkg:/go/pkg
     environment:
       - TZ=America/Belem
+    ports:
+      - 8080:8080
     tty: true
     restart: on-failure
+
+  # tsa:
+  #   image: freetsa/tsa:latest
+  #   ports:
+  #     - "8081:8080"
+  #   volumes:
+  #     - ./tsa-data:/var/lib/tsa
+  #   environment:
+  #     - TSA_URL=http://localhost:8081
+  #   restart: unless-stopped

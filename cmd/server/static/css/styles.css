@@ -1,0 +1,204 @@
+/* Custom CSS for DocChain Application */
+
+/* Custom color for purple elements */
+.text-purple {
+    color: #6f42c1;
+}
+
+.bg-purple {
+    background-color: #6f42c1;
+}
+
+.bg-purple-subtle {
+    background-color: #e2d9f3;
+}
+
+.btn-purple {
+    background-color: #6f42c1;
+    color: white;
+}
+
+.btn-purple:hover {
+    background-color: #5a32a3;
+    color: white;
+}
+
+/* Card styling */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-badge-signed {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-badge-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Document type badges */
+.doc-type-badge {
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.25rem;
+    background-color: #e9ecef;
+}
+
+.doc-type-pdf {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.doc-type-html {
+    background-color: #cff4fc;
+    color: #055160;
+}
+
+.doc-type-md {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* Table styling */
+.table-responsive {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* Wallet ID styling */
+.wallet-id {
+    font-family: monospace;
+    font-size: 0.85rem;
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+/* Certificate badge styling */
+.cert-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.cert-badge-valid {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.cert-badge-none {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* Template card styling */
+.template-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.template-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.template-card-footer {
+    margin-top: auto;
+}
+
+/* Block hash styling */
+.block-hash {
+    font-family: monospace;
+    font-size: 0.85rem;
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    display: inline-block;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Recent items list styling */
+.recent-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.recent-item:last-child {
+    border-bottom: none;
+}
+
+.recent-item-icon {
+    margin-right: 0.5rem;
+}
+
+/* Make the page fill the viewport height */
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1;
+}
+
+/* Notification toast styling */
+.toast-success {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+}
+
+.toast-error {
+    background-color: #f8d7da !important;
+    color: #842029 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.85rem;
+    }
+    
+    .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}

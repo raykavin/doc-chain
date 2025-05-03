@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Allow search engines to crawl the public pages
+# but prevent them from accessing API endpoints
+
+Sitemap: https://docchain.example.com/sitemap.xml

@@ -33,6 +33,7 @@ This CLI allows you to create wallets, sign documents, mine blocks, and more.`,
 	rootCmd.AddCommand(newWalletCmd())
 	rootCmd.AddCommand(newDocumentCmd())
 	rootCmd.AddCommand(newBlockchainCmd())
+	rootCmd.AddCommand(newICPBrasilCmd())
 
 	cobra.OnInitialize(initConfig)
 

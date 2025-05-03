@@ -1,0 +1,11 @@
+/* TEAM */
+Developer: DocChain Team
+Site: https://docchain.example.com
+Contact: contact@docchain.example.com
+Location: Brazil
+
+/* SITE */
+Last update: 2025/05/03
+Standards: HTML5, CSS3, JavaScript
+Components: Bootstrap 5, Bootstrap Icons
+Software: Visual Studio Code, Go, Git
