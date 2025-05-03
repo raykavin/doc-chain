@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"document-blockchain/internal/server"
+	"github.com/raykavin/docchain/internal/server"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	srv.Configure()
 	
 	// Start the server
-	log.Printf("Starting Document Blockchain server on port %s with difficulty %d", port, difficulty)
+	log.Printf("Starting Doc Chain server on port %s with difficulty %d", port, difficulty)
 	if err := srv.Start(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

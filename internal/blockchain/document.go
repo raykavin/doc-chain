@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"document-blockchain/internal/crypto"
+	"github.com/raykavin/docchain/internal/crypto"
 )
 
 // Document represents a signed document in the blockchain

@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"document-blockchain/internal/blockchain"
-	"document-blockchain/internal/crypto"
-	"document-blockchain/internal/models"
+	"github.com/raykavin/docchain/internal/blockchain"
+	"github.com/raykavin/docchain/internal/crypto"
+	"github.com/raykavin/docchain/internal/models"
 )
 
 // WalletHandlers contains handlers for wallet-related endpoints

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"document-blockchain/internal/cli"
+	"github.com/raykavin/docchain/internal/cli"
 )
 
 func main() {

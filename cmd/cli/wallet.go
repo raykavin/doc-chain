@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"document-blockchain/internal/models"
+	"github.com/raykavin/docchain/internal/models"
 )
 
 func newWalletCmd() *cobra.Command {

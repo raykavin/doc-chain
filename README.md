@@ -1,4 +1,4 @@
-# Document Blockchain
+# Doc Chain
 
 A blockchain-based document signing and verification system that allows users to securely sign documents, verify signatures, and maintain an immutable record of signed documents.
 
@@ -55,8 +55,8 @@ The application follows clean architecture and SOLID principles with a clear sep
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/document-blockchain.git
-   cd document-blockchain
+   git clone https://github.com/yourusername/github.com/raykavin/docchain.git
+   cd github.com/raykavin/docchain
    ```
 
 2. Install dependencies:

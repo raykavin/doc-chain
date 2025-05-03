@@ -1,7 +1,7 @@
 package blockchain
 
 import (
-	"document-blockchain/internal/crypto"
+	"github.com/raykavin/docchain/internal/crypto"
 	"time"
 )
 

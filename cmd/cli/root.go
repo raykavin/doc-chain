@@ -17,8 +17,8 @@ var (
 func NewRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 		Use:   "blockchain-cli",
-		Short: "Document Blockchain CLI",
-		Long: `A command-line interface for interacting with the Document Blockchain system.
+		Short: "Doc Chain CLI",
+		Long: `A command-line interface for interacting with the Doc Chain system.
 This CLI allows you to create wallets, sign documents, mine blocks, and more.`,
 	}
 

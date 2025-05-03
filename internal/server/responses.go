@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"document-blockchain/internal/models"
+	"github.com/raykavin/docchain/internal/models"
 )
 
 // SendJSONResponse sends a JSON response with the given status code and data
