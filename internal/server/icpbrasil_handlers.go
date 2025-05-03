@@ -77,24 +77,24 @@ func (h *ICPBrasilHandlers) SignDocument(w http.ResponseWriter, r *http.Request)
 	// Parse the request
 	var req ICPBrasilSignRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
 		return
 	}
 
 	// Validate the request
 	if req.Document == "" {
-		SendErrorResponse(w, http.StatusBadRequest, "Document is required")
+		RespondWithError(w, http.StatusBadRequest, "Document is required")
 		return
 	}
 	if req.Certificate == "" {
-		SendErrorResponse(w, http.StatusBadRequest, "Certificate is required")
+		RespondWithError(w, http.StatusBadRequest, "Certificate is required")
 		return
 	}
 
 	// Create a temporary directory for the files
 	tempDir, err := ioutil.TempDir("", "icpbrasil-sign-")
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
 		return
 	}
 	defer os.RemoveAll(tempDir)
@@ -102,28 +102,28 @@ func (h *ICPBrasilHandlers) SignDocument(w http.ResponseWriter, r *http.Request)
 	// Decode the document
 	documentData, err := base64.StdEncoding.DecodeString(req.Document)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid document encoding: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid document encoding: "+err.Error())
 		return
 	}
 
 	// Write the document to a temporary file
 	documentPath := filepath.Join(tempDir, "document")
 	if err := ioutil.WriteFile(documentPath, documentData, 0644); err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to write document: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to write document: "+err.Error())
 		return
 	}
 
 	// Decode the certificate
 	certificateData, err := base64.StdEncoding.DecodeString(req.Certificate)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid certificate encoding: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid certificate encoding: "+err.Error())
 		return
 	}
 
 	// Write the certificate to a temporary file
 	certificatePath := filepath.Join(tempDir, "certificate.p12")
 	if err := ioutil.WriteFile(certificatePath, certificateData, 0644); err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to write certificate: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to write certificate: "+err.Error())
 		return
 	}
 
@@ -156,7 +156,7 @@ func (h *ICPBrasilHandlers) SignDocument(w http.ResponseWriter, r *http.Request)
 			options,
 		)
 		if signErr != nil {
-			SendErrorResponse(w, http.StatusInternalServerError, "Failed to sign and add to blockchain: "+signErr.Error())
+			RespondWithError(w, http.StatusInternalServerError, "Failed to sign and add to blockchain: "+signErr.Error())
 			return
 		}
 		signedDoc = bcDoc.SignedDocument
@@ -169,7 +169,7 @@ func (h *ICPBrasilHandlers) SignDocument(w http.ResponseWriter, r *http.Request)
 			options,
 		)
 		if signErr != nil {
-			SendErrorResponse(w, http.StatusInternalServerError, "Failed to sign document: "+signErr.Error())
+			RespondWithError(w, http.StatusInternalServerError, "Failed to sign document: "+signErr.Error())
 			return
 		}
 	}
@@ -196,7 +196,7 @@ func (h *ICPBrasilHandlers) SignDocument(w http.ResponseWriter, r *http.Request)
 	if req.AddToBlockchain && req.MineBlock {
 		block, err := h.server.Blockchain.MineBlock()
 		if err != nil {
-			SendErrorResponse(w, http.StatusInternalServerError, "Failed to mine block: "+err.Error())
+			RespondWithError(w, http.StatusInternalServerError, "Failed to mine block: "+err.Error())
 			return
 		}
 		response["blockMined"] = true
@@ -206,7 +206,7 @@ func (h *ICPBrasilHandlers) SignDocument(w http.ResponseWriter, r *http.Request)
 		response["blockMined"] = false
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Document signed successfully", response)
+	RespondWithJSON(w, http.StatusOK, response)
 }
 
 // VerifySignature verifies a document signature
@@ -214,24 +214,24 @@ func (h *ICPBrasilHandlers) VerifySignature(w http.ResponseWriter, r *http.Reque
 	// Parse the request
 	var req ICPBrasilVerifyRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
 		return
 	}
 
 	// Validate the request
 	if req.Document == "" {
-		SendErrorResponse(w, http.StatusBadRequest, "Document is required")
+		RespondWithError(w, http.StatusBadRequest, "Document is required")
 		return
 	}
 	if req.Signature == "" {
-		SendErrorResponse(w, http.StatusBadRequest, "Signature is required")
+		RespondWithError(w, http.StatusBadRequest, "Signature is required")
 		return
 	}
 
 	// Create a temporary directory for the files
 	tempDir, err := ioutil.TempDir("", "icpbrasil-verify-")
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
 		return
 	}
 	defer os.RemoveAll(tempDir)
@@ -239,28 +239,28 @@ func (h *ICPBrasilHandlers) VerifySignature(w http.ResponseWriter, r *http.Reque
 	// Decode the document
 	documentData, err := base64.StdEncoding.DecodeString(req.Document)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid document encoding: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid document encoding: "+err.Error())
 		return
 	}
 
 	// Write the document to a temporary file
 	documentPath := filepath.Join(tempDir, "document")
 	if err := ioutil.WriteFile(documentPath, documentData, 0644); err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to write document: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to write document: "+err.Error())
 		return
 	}
 
 	// Decode the signature
 	signatureData, err := base64.StdEncoding.DecodeString(req.Signature)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid signature encoding: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid signature encoding: "+err.Error())
 		return
 	}
 
 	// Write the signature to a temporary file
 	signaturePath := filepath.Join(tempDir, "signature.p7s")
 	if err := ioutil.WriteFile(signaturePath, signatureData, 0644); err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to write signature: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to write signature: "+err.Error())
 		return
 	}
 
@@ -275,14 +275,14 @@ func (h *ICPBrasilHandlers) VerifySignature(w http.ResponseWriter, r *http.Reque
 		// Verify signature and check blockchain
 		bcValid, result, verifyErr = dm.VerifySignatureAndBlockchain(documentPath, signaturePath)
 		if verifyErr != nil && !strings.HasPrefix(verifyErr.Error(), "blockchain verification") {
-			SendErrorResponse(w, http.StatusInternalServerError, "Failed to verify signature: "+verifyErr.Error())
+			RespondWithError(w, http.StatusInternalServerError, "Failed to verify signature: "+verifyErr.Error())
 			return
 		}
 	} else {
 		// Just verify the signature
 		result, verifyErr = dm.VerifySignature(documentPath, signaturePath)
 		if verifyErr != nil {
-			SendErrorResponse(w, http.StatusInternalServerError, "Failed to verify signature: "+verifyErr.Error())
+			RespondWithError(w, http.StatusInternalServerError, "Failed to verify signature: "+verifyErr.Error())
 			return
 		}
 	}
@@ -310,7 +310,7 @@ func (h *ICPBrasilHandlers) VerifySignature(w http.ResponseWriter, r *http.Reque
 		}
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Signature verification completed", response)
+	RespondWithJSON(w, http.StatusOK, response)
 }
 
 // GetCertificateInfo gets information about a certificate
@@ -318,20 +318,20 @@ func (h *ICPBrasilHandlers) GetCertificateInfo(w http.ResponseWriter, r *http.Re
 	// Parse the request
 	var req ICPBrasilCertInfoRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
 		return
 	}
 
 	// Validate the request
 	if req.Certificate == "" {
-		SendErrorResponse(w, http.StatusBadRequest, "Certificate is required")
+		RespondWithError(w, http.StatusBadRequest, "Certificate is required")
 		return
 	}
 
 	// Create a temporary directory for the files
 	tempDir, err := ioutil.TempDir("", "icpbrasil-certinfo-")
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
 		return
 	}
 	defer os.RemoveAll(tempDir)
@@ -339,28 +339,28 @@ func (h *ICPBrasilHandlers) GetCertificateInfo(w http.ResponseWriter, r *http.Re
 	// Decode the certificate
 	certificateData, err := base64.StdEncoding.DecodeString(req.Certificate)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid certificate encoding: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid certificate encoding: "+err.Error())
 		return
 	}
 
 	// Write the certificate to a temporary file
 	certificatePath := filepath.Join(tempDir, "certificate.p12")
 	if err := ioutil.WriteFile(certificatePath, certificateData, 0644); err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to write certificate: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to write certificate: "+err.Error())
 		return
 	}
 
 	// Load the certificate
 	cert, err := icpbrasil.LoadPFXFromFile(certificatePath, req.Password)
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to load certificate: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to load certificate: "+err.Error())
 		return
 	}
 
 	// Get certificate information
 	info := cert.GetCertificateInfo()
 
-	SendSuccessResponse(w, http.StatusOK, "Certificate information retrieved", info)
+	RespondWithJSON(w, http.StatusOK, info)
 }
 
 // CheckRevocation checks if a certificate is revoked
@@ -368,20 +368,20 @@ func (h *ICPBrasilHandlers) CheckRevocation(w http.ResponseWriter, r *http.Reque
 	// Parse the request
 	var req ICPBrasilCheckRevocationRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
 		return
 	}
 
 	// Validate the request
 	if req.Certificate == "" {
-		SendErrorResponse(w, http.StatusBadRequest, "Certificate is required")
+		RespondWithError(w, http.StatusBadRequest, "Certificate is required")
 		return
 	}
 
 	// Create a temporary directory for the files
 	tempDir, err := ioutil.TempDir("", "icpbrasil-revocation-")
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to create temporary directory: "+err.Error())
 		return
 	}
 	defer os.RemoveAll(tempDir)
@@ -389,14 +389,14 @@ func (h *ICPBrasilHandlers) CheckRevocation(w http.ResponseWriter, r *http.Reque
 	// Decode the certificate
 	certificateData, err := base64.StdEncoding.DecodeString(req.Certificate)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid certificate encoding: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Invalid certificate encoding: "+err.Error())
 		return
 	}
 
 	// Write the certificate to a temporary file
 	certificatePath := filepath.Join(tempDir, "certificate.p12")
 	if err := ioutil.WriteFile(certificatePath, certificateData, 0644); err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to write certificate: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to write certificate: "+err.Error())
 		return
 	}
 
@@ -406,11 +406,11 @@ func (h *ICPBrasilHandlers) CheckRevocation(w http.ResponseWriter, r *http.Reque
 	// Check revocation
 	isRevoked, err := dm.CheckRevocation(certificatePath, req.Password)
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to check revocation: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Failed to check revocation: "+err.Error())
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Revocation check completed", map[string]bool{
+	RespondWithJSON(w, http.StatusOK, map[string]bool{
 		"isRevoked": isRevoked,
 	})
 }
@@ -424,7 +424,7 @@ func (h *ICPBrasilHandlers) GetDocumentInfo(w http.ResponseWriter, r *http.Reque
 	// Get the document from the blockchain
 	doc := h.server.Blockchain.GetDocumentByID(documentID)
 	if doc == nil {
-		SendErrorResponse(w, http.StatusNotFound, "Document not found")
+		RespondWithError(w, http.StatusNotFound, "Document not found")
 		return
 	}
 
@@ -455,5 +455,5 @@ func (h *ICPBrasilHandlers) GetDocumentInfo(w http.ResponseWriter, r *http.Reque
 		info["Status"] = "Pending (not yet in a block)"
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Document information retrieved", info)
+	RespondWithJSON(w, http.StatusOK, info)
 }

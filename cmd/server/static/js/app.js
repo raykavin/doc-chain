@@ -3,26 +3,8 @@
  * Main application JavaScript
  */
 
-// Mock data for demonstration
-const mockData = {
-    wallets: [
-        { id: '1a2b3c', name: 'Personal Wallet', hasICPCert: true, certType: 'e-CPF' },
-        { id: '4d5e6f', name: 'Corporate Wallet', hasICPCert: true, certType: 'e-CNPJ' }
-    ],
-    documents: [
-        { id: 'doc1', title: 'Contract with Client A', status: 'signed', signedBy: '1a2b3c', signatureTime: '2025-05-01T14:30:00Z', contentType: 'pdf' },
-        { id: 'doc2', title: 'Invoice #12345', status: 'pending', contentType: 'html' },
-        { id: 'doc3', title: 'Terms of Service', status: 'signed', signedBy: '4d5e6f', signatureTime: '2025-04-28T10:15:00Z', contentType: 'md' }
-    ],
-    templates: [
-        { id: 'temp1', name: 'Service Contract', description: 'Standard service agreement', type: 'md' },
-        { id: 'temp2', name: 'Invoice', description: 'Basic invoice template', type: 'html' }
-    ],
-    blocks: [
-        { index: 0, hash: '0000abc123def456', documentCount: 1, timestamp: '2025-01-01T00:00:00Z' },
-        { index: 1, hash: '0000def456abc789', documentCount: 2, timestamp: '2025-04-28T10:30:00Z' }
-    ]
-};
+// API client instance
+const apiClient = api;
 
 // Application state
 const appState = {
@@ -98,26 +80,51 @@ const modals = {
 };
 
 // Initialize the application
-function initApp() {
-    // Load data (in a real app, this would fetch from the API)
-    loadMockData();
-    
-    // Set up event listeners
-    setupEventListeners();
-    
-    // Update UI
-    updateUI();
-    
-    // Set validation time
-    elements.validationTime.textContent = new Date().toLocaleString();
+async function initApp() {
+    try {
+        // Load data from API
+        await loadData();
+        
+        // Set up event listeners
+        setupEventListeners();
+        
+        // Update UI
+        updateUI();
+        
+        // Set validation time
+        elements.validationTime.textContent = new Date().toLocaleString();
+    } catch (error) {
+        console.error('Falha ao inicializar aplicativo:', error);
+        showNotification('Falha ao carregar dados do servidor', 'error');
+    }
 }
 
-// Load mock data
-function loadMockData() {
-    appState.wallets = [...mockData.wallets];
-    appState.documents = [...mockData.documents];
-    appState.templates = [...mockData.templates];
-    appState.blocks = [...mockData.blocks];
+// Load data from API
+async function loadData() {
+    try {
+        // Load wallets
+        const walletsResponse = await apiClient.request('/api/wallet/list');
+        appState.wallets = walletsResponse.wallets || [];
+        
+        // Load documents
+        const documentsResponse = await apiClient.request('/api/document/list');
+        appState.documents = documentsResponse.documents || [];
+        
+        // Load templates
+        const templatesResponse = await apiClient.request('/api/template/list');
+        appState.templates = templatesResponse.templates || [];
+        
+        // Load blocks
+        const blocksResponse = await apiClient.request('/api/blockchain/blocks');
+        appState.blocks = blocksResponse.blocks || [];
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        // If API fails, use empty arrays
+        appState.wallets = [];
+        appState.documents = [];
+        appState.templates = [];
+        appState.blocks = [];
+    }
 }
 
 // Set up event listeners
@@ -174,20 +181,20 @@ function updateUI() {
 // Update counter displays
 function updateCounters() {
     elements.documentsCount.textContent = appState.documents.length;
-    elements.signedDocumentsCount.textContent = `${appState.documents.filter(d => d.status === 'signed').length} signed`;
+    elements.signedDocumentsCount.textContent = `${appState.documents.filter(d => d.status === 'signed').length} assinados`;
     
     elements.walletsCount.textContent = appState.wallets.length;
-    elements.certWalletsCount.textContent = `${appState.wallets.filter(w => w.hasICPCert).length} with ICP certificates`;
+    elements.certWalletsCount.textContent = `${appState.wallets.filter(w => w.hasCert).length} com certificados ICP`;
     
     elements.blocksCount.textContent = appState.blocks.length;
     const pendingDocs = appState.documents.filter(doc => doc.status === 'signed' && !doc.blockIndex).length;
-    elements.pendingDocsCount.textContent = `${pendingDocs} documents pending`;
+    elements.pendingDocsCount.textContent = `${pendingDocs} documentos pendentes`;
 }
 
 // Update recent documents list
 function updateRecentDocuments() {
     if (appState.documents.length === 0) {
-        elements.recentDocuments.innerHTML = '<p class="text-secondary text-center py-3">No documents yet</p>';
+        elements.recentDocuments.innerHTML = '<p class="text-secondary text-center py-3">Nenhum documento ainda</p>';
         return;
     }
     
@@ -212,7 +219,7 @@ function updateRecentDocuments() {
 // Update recent blocks list
 function updateRecentBlocks() {
     if (appState.blocks.length === 0) {
-        elements.recentBlocks.innerHTML = '<p class="text-secondary text-center py-3">No blocks yet</p>';
+        elements.recentBlocks.innerHTML = '<p class="text-secondary text-center py-3">Nenhum bloco ainda</p>';
         return;
     }
     
@@ -223,7 +230,7 @@ function updateRecentBlocks() {
             <li class="recent-item">
                 <div class="d-flex align-items-center">
                     <i class="bi bi-hdd text-purple recent-item-icon"></i>
-                    <span>Block #${block.index}</span>
+                    <span>Bloco #${block.index}</span>
                 </div>
                 <span class="text-secondary small">${new Date(block.timestamp).toLocaleDateString()}</span>
             </li>
@@ -238,10 +245,10 @@ function updateRecentBlocks() {
 function updateWalletsTable() {
     if (appState.wallets.length === 0) {
         elements.walletsTable.innerHTML = `
-            <p class="text-secondary text-center py-5">No wallets created yet</p>
+            <p class="text-secondary text-center py-5">Nenhuma carteira criada ainda</p>
             <div class="text-center pb-4">
                 <button class="btn btn-primary" id="createFirstWalletBtn">
-                    <i class="bi bi-person-plus me-1"></i> Create Your First Wallet
+                    <i class="bi bi-person-plus me-1"></i> Criar Sua Primeira Carteira
                 </button>
             </div>
         `;
@@ -255,9 +262,9 @@ function updateWalletsTable() {
                 <thead class="table-light">
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Certificate</th>
-                        <th>Actions</th>
+                        <th>Nome</th>
+                        <th>Certificado</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -269,13 +276,13 @@ function updateWalletsTable() {
                 <td><span class="wallet-id">${wallet.id}</span></td>
                 <td>${wallet.name}</td>
                 <td>
-                    ${wallet.hasICPCert 
+                    ${wallet.hasCert 
                         ? `<span class="cert-badge cert-badge-valid">${wallet.certType || 'ICP-Brasil'}</span>` 
-                        : '<span class="cert-badge cert-badge-none">None</span>'}
+                        : '<span class="cert-badge cert-badge-none">Nenhum</span>'}
                 </td>
                 <td>
-                    ${!wallet.hasICPCert 
-                        ? `<button class="btn btn-sm btn-success create-cert-btn" data-wallet-id="${wallet.id}">Create ICP Certificate</button>` 
+                    ${!wallet.hasCert 
+                        ? `<button class="btn btn-sm btn-success create-cert-btn" data-wallet-id="${wallet.id}">Criar Certificado ICP</button>` 
                         : ''}
                 </td>
             </tr>
@@ -303,10 +310,10 @@ function updateWalletsTable() {
 function updateDocumentsTable() {
     if (appState.documents.length === 0) {
         elements.documentsTable.innerHTML = `
-            <p class="text-secondary text-center py-5">No documents yet</p>
+            <p class="text-secondary text-center py-5">Nenhum documento ainda</p>
             <div class="text-center pb-4">
                 <button class="btn btn-success" id="uploadFirstDocumentBtn">
-                    <i class="bi bi-upload me-1"></i> Upload Your First Document
+                    <i class="bi bi-upload me-1"></i> Envie Seu Primeiro Documento
                 </button>
             </div>
         `;
@@ -319,11 +326,11 @@ function updateDocumentsTable() {
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Title</th>
-                        <th>Type</th>
+                        <th>Título</th>
+                        <th>Tipo</th>
                         <th>Status</th>
-                        <th>Signed By</th>
-                        <th>Actions</th>
+                        <th>Assinado Por</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -336,15 +343,15 @@ function updateDocumentsTable() {
                 <td><span class="doc-type-badge ${doc.contentType ? `doc-type-${doc.contentType}` : ''}">${doc.contentType}</span></td>
                 <td>
                     ${doc.status === 'signed' 
-                        ? '<span class="status-badge status-badge-signed"><i class="bi bi-check-circle me-1"></i> Signed</span>' 
-                        : '<span class="status-badge status-badge-pending"><i class="bi bi-clock me-1"></i> Pending</span>'}
+                        ? '<span class="status-badge status-badge-signed"><i class="bi bi-check-circle me-1"></i> Assinado</span>' 
+                        : '<span class="status-badge status-badge-pending"><i class="bi bi-clock me-1"></i> Pendente</span>'}
                 </td>
                 <td>${doc.signedBy ? `<span class="wallet-id">${doc.signedBy}</span>` : '-'}</td>
                 <td>
                     <div class="btn-group btn-group-sm">
                         ${doc.status !== 'signed' 
-                            ? `<button class="btn btn-primary sign-doc-btn" data-doc-id="${doc.id}">Sign</button>` 
-                            : `<button class="btn btn-info verify-doc-btn" data-doc-id="${doc.id}">Verify</button>`}
+                            ? `<button class="btn btn-primary sign-doc-btn" data-doc-id="${doc.id}">Assinar</button>` 
+                            : `<button class="btn btn-info verify-doc-btn" data-doc-id="${doc.id}">Verificar</button>`}
                         <button class="btn btn-secondary">Download</button>
                     </div>
                 </td>
@@ -367,12 +374,12 @@ function updateDocumentsTable() {
             
             // Populate the wallet dropdown
             const walletSelect = elements.signWallet;
-            walletSelect.innerHTML = '<option value="">Select a wallet</option>';
+            walletSelect.innerHTML = '<option value="">Selecione uma carteira</option>';
             
-            appState.wallets.filter(w => w.hasICPCert).forEach(wallet => {
+            appState.wallets.filter(w => w.hasCert).forEach(wallet => {
                 const option = document.createElement('option');
                 option.value = wallet.id;
-                option.textContent = `${wallet.name} (${wallet.certType})`;
+                option.textContent = `${wallet.name} (${wallet.certType || 'ICP-Brasil'})`;
                 walletSelect.appendChild(option);
             });
             
@@ -394,14 +401,14 @@ function updateTemplatesGrid() {
     if (appState.templates.length === 0) {
         elements.templatesGrid.innerHTML = `
             <div class="col-12 text-center py-5">
-                <p class="text-secondary mb-3">No templates available</p>
+                <p class="text-secondary mb-3">Nenhum modelo disponível</p>
                 <button class="btn btn-primary" id="createFirstTemplateBtn">
-                    <i class="bi bi-file-earmark-plus me-1"></i> Create Your First Template
+                    <i class="bi bi-file-earmark-plus me-1"></i> Crie Seu Primeiro Modelo
                 </button>
             </div>
         `;
         document.getElementById('createFirstTemplateBtn').addEventListener('click', () => {
-            showNotification('Template creation is not implemented in this demo', 'info');
+            showNotification('Indisponível', 'error');
         });
         return;
     }
@@ -416,13 +423,13 @@ function updateTemplatesGrid() {
                         <h3 class="h5 fw-semibold text-dark mb-2">${template.name}</h3>
                         <p class="text-secondary mb-3">${template.description}</p>
                         <div class="mb-3">
-                            <span class="doc-type-badge ${template.type ? `doc-type-${template.type}` : ''}">${template.type}</span>
+                            <span class="doc-type-badge ${template.contentType ? `doc-type-${template.contentType}` : ''}">${template.contentType}</span>
                         </div>
                         <div class="template-card-footer d-flex gap-2">
                             <button class="btn btn-primary flex-grow-1">
-                                <i class="bi bi-file-earmark-text me-1"></i> Use Template
+                                <i class="bi bi-file-earmark-text me-1"></i> Usar Modelo
                             </button>
-                            <button class="btn btn-outline-secondary">Preview</button>
+                            <button class="btn btn-outline-secondary">Visualizar</button>
                         </div>
                     </div>
                 </div>
@@ -437,10 +444,10 @@ function updateTemplatesGrid() {
 function updateBlocksTable() {
     if (appState.blocks.length === 0) {
         elements.blocksTable.innerHTML = `
-            <p class="text-secondary text-center py-5">No blocks in the blockchain yet</p>
+            <p class="text-secondary text-center py-5">Nenhum bloco na blockchain ainda</p>
             <div class="text-center pb-4">
                 <button class="btn btn-purple" id="mineGenesisBlockBtn">
-                    <i class="bi bi-hdd me-1"></i> Mine Genesis Block
+                    <i class="bi bi-hdd me-1"></i> Minerar Bloco Gênesis
                 </button>
             </div>
         `;
@@ -453,25 +460,27 @@ function updateBlocksTable() {
             <table class="table table-hover mb-0">
                 <thead class="table-light">
                     <tr>
-                        <th>Block #</th>
+                        <th>Bloco #</th>
                         <th>Hash</th>
-                        <th>Documents</th>
+                        <th>Documentos</th>
                         <th>Timestamp</th>
-                        <th>Actions</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
     `;
     
     appState.blocks.forEach(block => {
+        const documentCount = block.documents ? block.documents.length : 0;
+        
         html += `
             <tr>
                 <td>${block.index}</td>
                 <td><span class="block-hash" title="${block.hash}">${block.hash}</span></td>
-                <td>${block.documentCount}</td>
+                <td>${documentCount}</td>
                 <td>${new Date(block.timestamp).toLocaleString()}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary">View Details</button>
+                    <button class="btn btn-sm btn-primary">Ver Detalhes</button>
                 </td>
             </tr>
         `;
@@ -487,239 +496,253 @@ function updateBlocksTable() {
 }
 
 // Create a new wallet
-function createWallet() {
+async function createWallet() {
     const name = elements.walletName.value.trim();
     
     if (!name) {
-        showNotification('Please enter a wallet name', 'error');
+        showNotification('Por favor, insira um nome para a carteira', 'error');
         return;
     }
     
-    const newWallet = {
-        id: generateId(),
-        name: name,
-        hasICPCert: false
-    };
-    
-    appState.wallets.push(newWallet);
-    modals.createWallet.hide();
-    elements.walletName.value = '';
-    
-    updateUI();
-    showNotification('Wallet created successfully');
+    try {
+        const response = await apiClient.createWallet(name);
+        
+        if (response && response.wallet) {
+            appState.wallets.push(response.wallet);
+            modals.createWallet.hide();
+            elements.walletName.value = '';
+            
+            updateUI();
+            showNotification('Carteira criada com sucesso');
+        } else {
+            throw new Error('Resposta inválida do servidor');
+        }
+    } catch (error) {
+        console.error('Falha ao criar carteira:', error);
+        showNotification('Falha ao criar carteira: ' + (error.message || 'Erro desconhecido'), 'error');
+    }
 }
 
 // Upload a document
-function uploadDocument() {
+async function uploadDocument() {
     const title = elements.documentTitle.value.trim();
     const file = elements.documentFile.files[0];
     
     if (!title) {
-        showNotification('Please enter a document title', 'error');
+        showNotification('Por favor, insira um título para o documento', 'error');
         return;
     }
     
     if (!file) {
-        showNotification('Please select a file', 'error');
+        showNotification('Por favor, selecione um arquivo', 'error');
         return;
     }
     
-    // Get file extension
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    let contentType;
-    
-    switch (fileExtension) {
-        case 'pdf':
-            contentType = 'pdf';
-            break;
-        case 'html':
-        case 'htm':
-            contentType = 'html';
-            break;
-        case 'md':
-        case 'markdown':
-            contentType = 'md';
-            break;
-        default:
-            contentType = fileExtension;
+    try {
+        // Create form data
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('file', file);
+        
+        // Custom request for file upload
+        const response = await fetch('/api/document/upload', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Falha ao enviar documento');
+        }
+        
+        const data = await response.json();
+        
+        if (data && data.document) {
+            appState.documents.push(data.document);
+            modals.uploadDocument.hide();
+            elements.documentTitle.value = '';
+            elements.documentFile.value = '';
+            
+            updateUI();
+            showNotification('Documento enviado com sucesso');
+        } else {
+            throw new Error('Resposta inválida do servidor');
+        }
+    } catch (error) {
+        console.error('Falha ao enviar documento:', error);
+        showNotification('Falha ao enviar documento: ' + (error.message || 'Erro desconhecido'), 'error');
     }
-    
-    const newDocument = {
-        id: generateId(),
-        title: title,
-        status: 'pending',
-        contentType: contentType
-    };
-    
-    appState.documents.push(newDocument);
-    modals.uploadDocument.hide();
-    elements.documentTitle.value = '';
-    elements.documentFile.value = '';
-    
-    updateUI();
-    showNotification('Document uploaded successfully');
 }
 
 // Sign a document
-function signDocument() {
+async function signDocument() {
     const walletId = elements.signWallet.value;
     const password = elements.certificatePassword.value;
     const addToBlockchain = elements.addToBlockchain.checked;
     const includeTimestamp = elements.includeTimestamp.checked;
     
     if (!walletId) {
-        showNotification('Please select a wallet', 'error');
+        showNotification('Por favor, selecione uma carteira', 'error');
         return;
     }
     
     if (!password) {
-        showNotification('Please enter the certificate password', 'error');
+        showNotification('Por favor, insira a senha do certificado', 'error');
         return;
     }
     
     const documentId = appState.selectedDocumentId;
     if (!documentId) {
-        showNotification('No document selected', 'error');
+        showNotification('Nenhum documento selecionado', 'error');
         return;
     }
     
-    // Update the document
-    appState.documents = appState.documents.map(doc => {
-        if (doc.id === documentId) {
-            return {
-                ...doc,
-                status: 'signed',
-                signedBy: walletId,
-                signatureTime: new Date().toISOString(),
-                addedToBlockchain: addToBlockchain,
-                hasTimestamp: includeTimestamp
-            };
+    try {
+        const response = await apiClient.signDocument({
+            documentId,
+            walletId,
+            password,
+            addToBlockchain,
+            includeTimestamp
+        });
+        
+        if (response && response.success) {
+            // Update the document in our state
+            const updatedDoc = response.document;
+            appState.documents = appState.documents.map(doc => 
+                doc.id === documentId ? updatedDoc : doc
+            );
+            
+            modals.signDocument.hide();
+            elements.signWallet.value = '';
+            elements.certificatePassword.value = '';
+            
+            updateUI();
+            showNotification('Documento assinado com sucesso');
+        } else {
+            throw new Error(response.message || 'Falha ao assinar documento');
         }
-        return doc;
-    });
-    
-    modals.signDocument.hide();
-    elements.signWallet.value = '';
-    elements.certificatePassword.value = '';
-    
-    updateUI();
-    showNotification('Document signed successfully');
+    } catch (error) {
+        console.error('Falha ao assinar documento:', error);
+        showNotification('Falha ao assinar documento: ' + (error.message || 'Erro desconhecido'), 'error');
+    }
 }
 
 // Create an ICP certificate
-function createCertificate() {
+async function createCertificate() {
     const certType = elements.certType.value;
     const password = elements.certPassword.value;
     const confirmPassword = elements.certConfirmPassword.value;
     
     if (!password) {
-        showNotification('Please enter a certificate password', 'error');
+        showNotification('Por favor, insira uma senha para o certificado', 'error');
         return;
     }
     
     if (password !== confirmPassword) {
-        showNotification('Passwords do not match', 'error');
+        showNotification('As senhas não coincidem', 'error');
         return;
     }
     
     const walletId = appState.selectedWalletId;
     if (!walletId) {
-        showNotification('No wallet selected', 'error');
+        showNotification('Nenhuma carteira selecionada', 'error');
         return;
     }
     
-    // Update the wallet
-    appState.wallets = appState.wallets.map(wallet => {
-        if (wallet.id === walletId) {
-            return {
-                ...wallet,
-                hasICPCert: true,
-                certType: certType
-            };
+    try {
+        const response = await apiClient.request('/api/icpbrasil/create-certificate', 'POST', {
+            walletId,
+            certType,
+            password
+        });
+        
+        if (response && response.success) {
+            // Update the wallet in our state
+            appState.wallets = appState.wallets.map(wallet => {
+                if (wallet.id === walletId) {
+                    return {
+                        ...wallet,
+                        hasCert: true,
+                        certType: certType
+                    };
+                }
+                return wallet;
+            });
+            
+            modals.createCertificate.hide();
+            elements.certPassword.value = '';
+            elements.certConfirmPassword.value = '';
+            
+            updateUI();
+            showNotification('Certificado ICP-Brasil criado com sucesso');
+        } else {
+            throw new Error(response.message || 'Falha ao criar certificado');
         }
-        return wallet;
-    });
-    
-    modals.createCertificate.hide();
-    elements.certPassword.value = '';
-    elements.certConfirmPassword.value = '';
-    
-    updateUI();
-    showNotification('ICP-Brasil certificate created successfully');
+    } catch (error) {
+        console.error('Falha ao criar certificado:', error);
+        showNotification('Falha ao criar certificado: ' + (error.message || 'Erro desconhecido'), 'error');
+    }
 }
 
 // Mine a block
-function mineBlock() {
-    const pendingDocs = appState.documents.filter(doc => doc.status === 'signed' && !doc.blockIndex);
-    
-    if (pendingDocs.length === 0) {
-        showNotification('No pending documents to mine', 'error');
-        return;
-    }
-    
-    const newBlockIndex = appState.blocks.length;
-    const newBlock = {
-        index: newBlockIndex,
-        hash: '0000' + generateId(),
-        documentCount: pendingDocs.length,
-        timestamp: new Date().toISOString()
-    };
-    
-    appState.blocks.push(newBlock);
-    
-    // Update documents to show they're now in a block
-    appState.documents = appState.documents.map(doc => {
-        if (doc.status === 'signed' && !doc.blockIndex) {
-            return {
-                ...doc,
-                blockIndex: newBlockIndex
-            };
+async function mineBlock() {
+    try {
+        const response = await apiClient.mineBlock();
+        
+        if (response && response.block) {
+            // Add the new block to our state
+            appState.blocks.push(response.block);
+            
+            // Update documents that are now in the block
+            if (response.updatedDocuments) {
+                response.updatedDocuments.forEach(updatedDoc => {
+                    appState.documents = appState.documents.map(doc => 
+                        doc.id === updatedDoc.id ? updatedDoc : doc
+                    );
+                });
+            }
+            
+            updateUI();
+            showNotification('Bloco minerado com sucesso');
+        } else {
+            throw new Error(response.message || 'Falha ao minerar bloco');
         }
-        return doc;
-    });
-    
-    updateUI();
-    showNotification('Block mined successfully');
+    } catch (error) {
+        console.error('Falha ao minerar bloco:', error);
+        showNotification('Falha ao minerar bloco: ' + (error.message || 'Erro desconhecido'), 'error');
+    }
 }
 
 // Verify a document
-function verifyDocument(docId) {
-    const doc = appState.documents.find(d => d.id === docId);
-    
-    if (!doc) {
-        showNotification('Document not found', 'error');
-        return;
+async function verifyDocument(docId) {
+    try {
+        const response = await apiClient.verifyDocument(docId);
+        
+        if (response && response.valid) {
+            let message = 'Documento é válido e assinado corretamente';
+            if (response.inBlockchain) {
+                message += ' e verificado na blockchain';
+            }
+            
+            showNotification(message);
+        } else {
+            showNotification(response.message || 'Documento inválido', 'error');
+        }
+    } catch (error) {
+        console.error('Falha ao verificar documento:', error);
+        showNotification('Falha ao verificar documento: ' + (error.message || 'Erro desconhecido'), 'error');
     }
-    
-    if (doc.status !== 'signed') {
-        showNotification('Document is not signed', 'error');
-        return;
-    }
-    
-    // Check if document is in blockchain
-    const inBlockchain = doc.blockIndex !== undefined;
-    
-    let message = 'Document is valid and properly signed';
-    if (inBlockchain) {
-        message += ' and verified in the blockchain';
-    }
-    
-    showNotification(message);
 }
 
 // Show a notification
 function showNotification(message, type = 'success') {
     elements.notificationMessage.textContent = message;
-    elements.notificationToast.classList.remove('toast-success', 'toast-error');
+    elements.notificationToast.classList.remove('toast-success', 'toast-error', 'toast-info');
     elements.notificationToast.classList.add(`toast-${type}`);
     
     const toast = new bootstrap.Toast(elements.notificationToast);
     toast.show();
-}
-
-// Generate a random ID
-function generateId() {
-    return Math.random().toString(36).substring(2, 10);
 }
 
 // Initialize the application when the DOM is loaded

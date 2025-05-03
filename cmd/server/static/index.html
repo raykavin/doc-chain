@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DocChain - Blockchain Document Signing with ICP-Brasil Support</title>
+    <title>DocChain - Assinatura de Documentos com Blockchain e Suporte ICP-Brasil</title>
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
     <!-- Web App Manifest -->
@@ -26,11 +26,11 @@
                 <div class="d-flex align-items-center">
                     <i class="bi bi-shield-lock fs-3 me-2"></i>
                     <h1 class="h3 mb-0 fw-bold">DocChain</h1>
-                    <span class="badge bg-primary-subtle text-primary-emphasis ms-2 small">ICP-Brasil Compliant</span>
+                    <span class="badge bg-primary-subtle text-primary-emphasis ms-2 small">ICP-Brasil</span>
                 </div>
                 <div>
                     <button class="btn btn-light text-primary" id="connectWalletBtn">
-                        Connect Wallet
+                        <i class="bi bi-wallet2 me-1"></i> Conectar Carteira
                     </button>
                 </div>
             </div>
@@ -42,19 +42,29 @@
         <div class="container">
             <ul class="nav nav-pills">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#home" data-bs-toggle="tab" id="home-tab">Home</a>
+                    <a class="nav-link active" href="#home" data-bs-toggle="tab" id="home-tab">
+                        <i class="bi bi-house-door me-1"></i> Início
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#wallets" data-bs-toggle="tab" id="wallets-tab">Wallets</a>
+                    <a class="nav-link" href="#wallets" data-bs-toggle="tab" id="wallets-tab">
+                        <i class="bi bi-wallet2 me-1"></i> Carteiras
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#documents" data-bs-toggle="tab" id="documents-tab">Documents</a>
+                    <a class="nav-link" href="#documents" data-bs-toggle="tab" id="documents-tab">
+                        <i class="bi bi-file-earmark-text me-1"></i> Documentos
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#templates" data-bs-toggle="tab" id="templates-tab">Templates</a>
+                    <a class="nav-link" href="#templates" data-bs-toggle="tab" id="templates-tab">
+                        <i class="bi bi-file-earmark-ruled me-1"></i> Modelos
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#blockchain" data-bs-toggle="tab" id="blockchain-tab">Blockchain</a>
+                    <a class="nav-link" href="#blockchain" data-bs-toggle="tab" id="blockchain-tab">
+                        <i class="bi bi-hdd-network me-1"></i> Blockchain
+                    </a>
                 </li>
             </ul>
         </div>
@@ -66,9 +76,9 @@
             <!-- Home Tab -->
             <div class="tab-pane fade show active" id="home">
                 <div class="mb-4">
-                    <h2 class="fw-semibold text-dark mb-3">Welcome to DocChain</h2>
+                    <h2 class="fw-semibold text-dark mb-3">Bem-vindo ao DocChain</h2>
                     <p class="text-secondary">
-                        Securely sign and verify documents with blockchain technology and ICP-Brasil compliance.
+                        Assine e verifique documentos com segurança utilizando tecnologia blockchain e certificados ICP-Brasil.
                     </p>
                 </div>
 
@@ -80,10 +90,10 @@
                                     <i class="bi bi-file-earmark-check text-primary fs-3"></i>
                                 </div>
                                 <div>
-                                    <h3 class="h5 fw-semibold text-dark">Documents</h3>
+                                    <h3 class="h5 fw-semibold text-dark">Documentos</h3>
                                     <div class="d-flex align-items-baseline">
                                         <span class="fs-3 fw-bold text-primary me-2" id="documentsCount">0</span>
-                                        <span class="text-secondary small" id="signedDocumentsCount">0 signed</span>
+                                        <span class="text-secondary small" id="signedDocumentsCount">0 assinados</span>
                                     </div>
                                 </div>
                             </div>
@@ -96,10 +106,10 @@
                                     <i class="bi bi-shield-check text-success fs-3"></i>
                                 </div>
                                 <div>
-                                    <h3 class="h5 fw-semibold text-dark">Wallets</h3>
+                                    <h3 class="h5 fw-semibold text-dark">Carteiras</h3>
                                     <div class="d-flex align-items-baseline">
                                         <span class="fs-3 fw-bold text-success me-2" id="walletsCount">0</span>
-                                        <span class="text-secondary small" id="certWalletsCount">0 with ICP certificates</span>
+                                        <span class="text-secondary small" id="certWalletsCount">0 com certificados ICP</span>
                                     </div>
                                 </div>
                             </div>
@@ -112,10 +122,10 @@
                                     <i class="bi bi-hdd text-purple fs-3"></i>
                                 </div>
                                 <div>
-                                    <h3 class="h5 fw-semibold text-dark">Blocks</h3>
+                                    <h3 class="h5 fw-semibold text-dark">Blocos</h3>
                                     <div class="d-flex align-items-baseline">
                                         <span class="fs-3 fw-bold text-purple me-2" id="blocksCount">0</span>
-                                        <span class="text-secondary small" id="pendingDocsCount">0 documents pending</span>
+                                        <span class="text-secondary small" id="pendingDocsCount">0 documentos pendentes</span>
                                     </div>
                                 </div>
                             </div>
@@ -127,9 +137,9 @@
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm">
                             <div class="card-body">
-                                <h3 class="h5 fw-semibold text-dark mb-3">Recent Documents</h3>
+                                <h3 class="h5 fw-semibold text-dark mb-3">Documentos Recentes</h3>
                                 <div id="recentDocuments">
-                                    <p class="text-secondary text-center py-3">No documents yet</p>
+                                    <p class="text-secondary text-center py-3">Nenhum documento ainda</p>
                                 </div>
                             </div>
                         </div>
@@ -137,9 +147,9 @@
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm">
                             <div class="card-body">
-                                <h3 class="h5 fw-semibold text-dark mb-3">Recent Blocks</h3>
+                                <h3 class="h5 fw-semibold text-dark mb-3">Blocos Recentes</h3>
                                 <div id="recentBlocks">
-                                    <p class="text-secondary text-center py-3">No blocks yet</p>
+                                    <p class="text-secondary text-center py-3">Nenhum bloco ainda</p>
                                 </div>
                             </div>
                         </div>
@@ -150,19 +160,19 @@
             <!-- Wallets Tab -->
             <div class="tab-pane fade" id="wallets">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-semibold text-dark">Wallets</h2>
+                    <h2 class="fw-semibold text-dark">Carteiras</h2>
                     <button class="btn btn-primary" id="createWalletBtn">
-                        <i class="bi bi-person-plus me-1"></i> Create Wallet
+                        <i class="bi bi-person-plus me-1"></i> Criar Carteira
                     </button>
                 </div>
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-0">
                         <div id="walletsTable">
-                            <p class="text-secondary text-center py-5">No wallets created yet</p>
+                            <p class="text-secondary text-center py-5">Nenhuma carteira criada ainda</p>
                             <div class="text-center pb-4">
                                 <button class="btn btn-primary" id="createFirstWalletBtn">
-                                    <i class="bi bi-person-plus me-1"></i> Create Your First Wallet
+                                    <i class="bi bi-person-plus me-1"></i> Criar Sua Primeira Carteira
                                 </button>
                             </div>
                         </div>
@@ -173,19 +183,19 @@
             <!-- Documents Tab -->
             <div class="tab-pane fade" id="documents">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-semibold text-dark">Documents</h2>
+                    <h2 class="fw-semibold text-dark">Documentos</h2>
                     <button class="btn btn-success" id="uploadDocumentBtn">
-                        <i class="bi bi-upload me-1"></i> Upload Document
+                        <i class="bi bi-upload me-1"></i> Enviar Documento
                     </button>
                 </div>
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-0">
                         <div id="documentsTable">
-                            <p class="text-secondary text-center py-5">No documents yet</p>
+                            <p class="text-secondary text-center py-5">Nenhum documento ainda</p>
                             <div class="text-center pb-4">
                                 <button class="btn btn-success" id="uploadFirstDocumentBtn">
-                                    <i class="bi bi-upload me-1"></i> Upload Your First Document
+                                    <i class="bi bi-upload me-1"></i> Envie Seu Primeiro Documento
                                 </button>
                             </div>
                         </div>
@@ -196,17 +206,17 @@
             <!-- Templates Tab -->
             <div class="tab-pane fade" id="templates">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h2 class="fw-semibold text-dark">Document Templates</h2>
+                    <h2 class="fw-semibold text-dark">Modelos de Documentos</h2>
                     <button class="btn btn-primary" id="createTemplateBtn">
-                        <i class="bi bi-file-earmark-plus me-1"></i> Create Template
+                        <i class="bi bi-file-earmark-plus me-1"></i> Criar Modelo
                     </button>
                 </div>
 
                 <div id="templatesGrid" class="row g-4">
                     <div class="col-12 text-center py-5">
-                        <p class="text-secondary mb-3">No templates available</p>
+                        <p class="text-secondary mb-3">Nenhum modelo disponível</p>
                         <button class="btn btn-primary" id="createFirstTemplateBtn">
-                            <i class="bi bi-file-earmark-plus me-1"></i> Create Your First Template
+                            <i class="bi bi-file-earmark-plus me-1"></i> Crie Seu Primeiro Modelo
                         </button>
                     </div>
                 </div>
@@ -217,17 +227,17 @@
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="fw-semibold text-dark">Blockchain</h2>
                     <button class="btn btn-purple" id="mineBlockBtn">
-                        <i class="bi bi-hdd me-1"></i> Mine New Block
+                        <i class="bi bi-hdd me-1"></i> Minerar Novo Bloco
                     </button>
                 </div>
 
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-body p-0">
                         <div id="blocksTable">
-                            <p class="text-secondary text-center py-5">No blocks in the blockchain yet</p>
+                            <p class="text-secondary text-center py-5">Nenhum bloco na blockchain ainda</p>
                             <div class="text-center pb-4">
                                 <button class="btn btn-purple" id="mineGenesisBlockBtn">
-                                    <i class="bi bi-hdd me-1"></i> Mine Genesis Block
+                                    <i class="bi bi-hdd me-1"></i> Minerar Bloco Gênesis
                                 </button>
                             </div>
                         </div>
@@ -236,13 +246,13 @@
 
                 <div class="card border-0 shadow-sm">
                     <div class="card-body">
-                        <h3 class="h5 fw-semibold text-dark mb-3">Blockchain Validation</h3>
+                        <h3 class="h5 fw-semibold text-dark mb-3">Validação da Blockchain</h3>
                         <div class="d-flex align-items-center text-success">
                             <i class="bi bi-check-circle me-2"></i>
-                            <span>Blockchain is valid and secure</span>
+                            <span>Blockchain é válida e segura</span>
                         </div>
                         <p class="text-secondary mt-2 small" id="lastValidatedTime">
-                            Last validated: <span id="validationTime"></span>
+                            Última validação: <span id="validationTime"></span>
                         </p>
                     </div>
                 </div>
@@ -253,7 +263,7 @@
     <!-- Footer -->
     <footer class="bg-dark text-white py-3 mt-auto">
         <div class="container text-center">
-            <p class="small mb-0">DocChain - Blockchain Document Signing with ICP-Brasil Compliance</p>
+            <p class="small mb-0">DocChain - Assinatura de Documentos com Blockchain e Suporte ICP-Brasil</p>
         </div>
     </footer>
 
@@ -265,7 +275,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body" id="notificationMessage">
-                Notification message here
+                Mensagem de notificação aqui
             </div>
         </div>
     </div>
@@ -276,24 +286,24 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="uploadDocumentModalLabel">Upload Document</h5>
+                    <h5 class="modal-title" id="uploadDocumentModalLabel">Enviar Documento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="uploadDocumentForm">
                         <div class="mb-3">
-                            <label for="documentTitle" class="form-label">Document Title</label>
+                            <label for="documentTitle" class="form-label">Título do Documento</label>
                             <input type="text" class="form-control" id="documentTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label for="documentFile" class="form-label">Document File</label>
+                            <label for="documentFile" class="form-label">Arquivo do Documento</label>
                             <input type="file" class="form-control" id="documentFile" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="uploadDocumentSubmitBtn">Upload</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="uploadDocumentSubmitBtn">Enviar</button>
                 </div>
             </div>
         </div>
@@ -304,20 +314,20 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createWalletModalLabel">Create Wallet</h5>
+                    <h5 class="modal-title" id="createWalletModalLabel">Criar Carteira</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createWalletForm">
                         <div class="mb-3">
-                            <label for="walletName" class="form-label">Wallet Name</label>
+                            <label for="walletName" class="form-label">Nome da Carteira</label>
                             <input type="text" class="form-control" id="walletName" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="createWalletSubmitBtn">Create</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="createWalletSubmitBtn">Criar</button>
                 </div>
             </div>
         </div>
@@ -328,34 +338,34 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="signDocumentModalLabel">Sign Document</h5>
+                    <h5 class="modal-title" id="signDocumentModalLabel">Assinar Documento</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="signDocumentForm">
                         <div class="mb-3">
-                            <label for="signWallet" class="form-label">Select Wallet</label>
+                            <label for="signWallet" class="form-label">Selecionar Carteira</label>
                             <select class="form-select" id="signWallet" required>
-                                <option value="">Select a wallet</option>
+                                <option value="">Selecione uma carteira</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="certificatePassword" class="form-label">Certificate Password</label>
+                            <label for="certificatePassword" class="form-label">Senha do Certificado</label>
                             <input type="password" class="form-control" id="certificatePassword">
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="addToBlockchain" checked>
-                            <label class="form-check-label" for="addToBlockchain">Add to blockchain</label>
+                            <label class="form-check-label" for="addToBlockchain">Adicionar a blockchain</label>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="includeTimestamp">
-                            <label class="form-check-label" for="includeTimestamp">Include timestamp</label>
+                            <label class="form-check-label" for="includeTimestamp">Incluir carimbo de tempo</label>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" id="signDocumentSubmitBtn">Sign</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="signDocumentSubmitBtn">Assinar</button>
                 </div>
             </div>
         </div>
@@ -366,31 +376,31 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="createCertificateModalLabel">Create ICP-Brasil Certificate</h5>
+                    <h5 class="modal-title" id="createCertificateModalLabel">Criar Certificado ICP-Brasil</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="createCertificateForm">
                         <div class="mb-3">
-                            <label for="certType" class="form-label">Certificate Type</label>
+                            <label for="certType" class="form-label">Tipo de Certificado</label>
                             <select class="form-select" id="certType" required>
-                                <option value="e-CPF">e-CPF (Personal)</option>
-                                <option value="e-CNPJ">e-CNPJ (Corporate)</option>
+                                <option value="e-CPF">e-CPF (Pessoal)</option>
+                                <option value="e-CNPJ">e-CNPJ (Empresarial)</option>
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="certPassword" class="form-label">Certificate Password</label>
+                            <label for="certPassword" class="form-label">Senha do Certificado</label>
                             <input type="password" class="form-control" id="certPassword" required>
                         </div>
                         <div class="mb-3">
-                            <label for="certConfirmPassword" class="form-label">Confirm Password</label>
+                            <label for="certConfirmPassword" class="form-label">Confirmar Senha</label>
                             <input type="password" class="form-control" id="certConfirmPassword" required>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="createCertificateSubmitBtn">Create</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success" id="createCertificateSubmitBtn">Criar</button>
                 </div>
             </div>
         </div>

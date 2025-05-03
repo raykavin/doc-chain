@@ -3,37 +3,39 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-
-	"github.com/raykavin/doc-chain/internal/dto"
 )
 
-// SendJSONResponse sends a JSON response with the given status code and data
-func SendJSONResponse(w http.ResponseWriter, statusCode int, response *dto.BlockchainResponse) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-
-	if err := json.NewEncoder(w).Encode(response); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
-	}
+// Response represents a JSON response
+type Response struct {
+	Success bool        `json:"success"`
+	Message string      `json:"message,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
 }
 
-// SendErrorResponse sends an error response with the given status code and message
-func SendErrorResponse(w http.ResponseWriter, statusCode int, message string) {
-	response := &dto.BlockchainResponse{
+// RespondWithJSON sends a JSON response
+func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	// Convert payload to JSON
+	response, err := json.Marshal(payload)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(`{"success":false,"message":"Erro ao gerar resposta JSON"}`))
+		return
+	}
+
+	// Set headers
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(response)
+}
+
+// RespondWithError sends an error response
+func RespondWithError(w http.ResponseWriter, code int, message string) {
+	// Create error response
+	response := Response{
 		Success: false,
 		Message: message,
 	}
 
-	SendJSONResponse(w, statusCode, response)
-}
-
-// SendSuccessResponse sends a success response with the given message and data
-func SendSuccessResponse(w http.ResponseWriter, statusCode int, message string, data interface{}) {
-	response := &dto.BlockchainResponse{
-		Success: true,
-		Message: message,
-		Data:    data,
-	}
-
-	SendJSONResponse(w, statusCode, response)
+	// Send response
+	RespondWithJSON(w, code, response)
 }

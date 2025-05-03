@@ -10,14 +10,17 @@ const ENDPOINTS = {
     // Wallet endpoints
     WALLET: {
         CREATE: `${API_BASE_URL}/wallet/new`,
-        GET: (id) => `${API_BASE_URL}/wallet/${id}`
+        GET: (id) => `${API_BASE_URL}/wallet/${id}`,
+        LIST: `${API_BASE_URL}/wallet/list`
     },
     
     // Document endpoints
     DOCUMENT: {
         SIGN: `${API_BASE_URL}/document/sign`,
         GET: (id) => `${API_BASE_URL}/document/${id}`,
-        VERIFY: (id) => `${API_BASE_URL}/document/verify/${id}`
+        VERIFY: (id) => `${API_BASE_URL}/document/verify/${id}`,
+        LIST: `${API_BASE_URL}/document/list`,
+        UPLOAD: `${API_BASE_URL}/document/upload`
     },
     
     // Blockchain endpoints
@@ -37,6 +40,16 @@ const ENDPOINTS = {
         CERT_INFO: `${API_BASE_URL}/icpbrasil/cert-info`,
         CHECK_REVOCATION: `${API_BASE_URL}/icpbrasil/check-revocation`,
         DOCUMENT: (id) => `${API_BASE_URL}/icpbrasil/document/${id}`
+    },
+    
+    // Template endpoints
+    TEMPLATE: {
+        LIST: `${API_BASE_URL}/template/list`,
+        GET: (id) => `${API_BASE_URL}/template/${id}`,
+        CREATE: `${API_BASE_URL}/template/create`,
+        UPDATE: (id) => `${API_BASE_URL}/template/${id}`,
+        DELETE: (id) => `${API_BASE_URL}/template/${id}`,
+        USE: `${API_BASE_URL}/template/use`
     }
 };
 
@@ -224,6 +237,62 @@ class DocChainAPI {
      */
     async getDocumentInfo(id) {
         return this.request(ENDPOINTS.ICPBRASIL.DOCUMENT(id));
+    }
+    
+    // ===== Template API =====
+    
+    /**
+     * Get all templates
+     * @returns {Promise<Array>} - The templates
+     */
+    async getTemplates() {
+        return this.request(ENDPOINTS.TEMPLATE.LIST);
+    }
+    
+    /**
+     * Get a template by ID
+     * @param {string} id - The template ID
+     * @returns {Promise<object>} - The template
+     */
+    async getTemplate(id) {
+        return this.request(ENDPOINTS.TEMPLATE.GET(id));
+    }
+    
+    /**
+     * Create a new template
+     * @param {object} data - The template data
+     * @returns {Promise<object>} - The created template
+     */
+    async createTemplate(data) {
+        return this.request(ENDPOINTS.TEMPLATE.CREATE, 'POST', data);
+    }
+    
+    /**
+     * Update a template
+     * @param {string} id - The template ID
+     * @param {object} data - The template data
+     * @returns {Promise<object>} - The updated template
+     */
+    async updateTemplate(id, data) {
+        return this.request(ENDPOINTS.TEMPLATE.UPDATE(id), 'PUT', data);
+    }
+    
+    /**
+     * Delete a template
+     * @param {string} id - The template ID
+     * @returns {Promise<object>} - The deletion result
+     */
+    async deleteTemplate(id) {
+        return this.request(ENDPOINTS.TEMPLATE.DELETE(id), 'DELETE');
+    }
+    
+    /**
+     * Create a document from a template
+     * @param {object} data - The template usage data
+     * @returns {Promise<object>} - The created document
+     */
+    async useTemplate(data) {
+        return this.request(ENDPOINTS.TEMPLATE.USE, 'POST', data);
     }
 }
 

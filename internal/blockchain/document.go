@@ -8,10 +8,10 @@ import (
 	"github.com/raykavin/doc-chain/internal/crypto"
 )
 
-// Document represents a signed document in the blockchain
+// Document is a signed document in the blockchain
 type Document struct {
 	ID        string            `json:"id"`
-	Content   string            `json:"content"` // This would be a hash of the actual document
+	Content   string            `json:"content"`
 	Signature *crypto.Signature `json:"signature"`
 	SignedBy  string            `json:"signedBy"` // Public key of the signer
 	Timestamp int64             `json:"timestamp"`

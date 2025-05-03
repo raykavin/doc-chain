@@ -14,14 +14,19 @@ func main() {
 	var (
 		port       string
 		difficulty int
+		dbPath     string
 	)
 	
 	flag.StringVar(&port, "port", getEnv("PORT", "8080"), "Server port")
 	flag.IntVar(&difficulty, "difficulty", getEnvAsInt("DIFFICULTY", 4), "Mining difficulty")
+	flag.StringVar(&dbPath, "db", getEnv("DB_PATH", "./data/docchain.db"), "Database path")
 	flag.Parse()
 	
 	// Create and configure the server
-	srv := server.NewServer(port, difficulty)
+	srv, err := server.NewServer(port, difficulty, dbPath)
+	if err != nil {
+		log.Fatalf("Failed to create server: %v", err)
+	}
 	srv.Configure()
 	
 	// Start the server

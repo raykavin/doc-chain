@@ -7,8 +7,10 @@ services:
       - ./:/go/src/docchain
       - ./.docker/go/bin:/go/bin
       - ./.docker/go/pkg:/go/pkg
+      - ./data:/go/src/docchain/data
     environment:
       - TZ=America/Belem
+      - DB_PATH=/go/src/docchain/data/docchain.db
     ports:
       - 8080:8080
     tty: true

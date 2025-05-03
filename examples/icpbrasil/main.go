@@ -4,22 +4,69 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"github.com/raykavin/doc-chain/internal/blockchain"
 	"github.com/raykavin/doc-chain/internal/icpbrasil"
+	"github.com/raykavin/doc-chain/internal/server"
 )
 
 func main() {
 	// Check command line arguments
-	if len(os.Args) < 4 {
-		fmt.Println("Usage: go run icpbrasil_example.go <document_path> <certificate_path> <certificate_password>")
+	if len(os.Args) < 2 {
+		fmt.Println("Usage: go run main.go <command>")
+		fmt.Println("Commands:")
+		fmt.Println("  server - Start the web server")
+		fmt.Println("  demo <document_path> <certificate_path> <certificate_password> - Run the demo")
 		os.Exit(1)
 	}
 
-	documentPath := os.Args[1]
-	certificatePath := os.Args[2]
-	certificatePassword := os.Args[3]
+	command := os.Args[1]
 
+	switch command {
+	case "server":
+		startServer()
+	case "demo":
+		if len(os.Args) < 5 {
+			fmt.Println("Usage: go run main.go demo <document_path> <certificate_path> <certificate_password>")
+			os.Exit(1)
+		}
+		runDemo(os.Args[2], os.Args[3], os.Args[4])
+	default:
+		fmt.Printf("Unknown command: %s\n", command)
+		os.Exit(1)
+	}
+}
+
+// startServer starts the web server
+func startServer() {
+	// Create data directory if it doesn't exist
+	dataDir := "./data"
+	if err := os.MkdirAll(dataDir, 0755); err != nil {
+		log.Fatalf("Failed to create data directory: %v", err)
+	}
+
+	// Database path
+	dbPath := filepath.Join(dataDir, "docchain.db")
+
+	// Create server
+	s, err := server.NewServer("8080", 4, dbPath)
+	if err != nil {
+		log.Fatalf("Failed to create server: %v", err)
+	}
+
+	// Configure server
+	s.Configure()
+
+	// Start server
+	log.Println("Starting server on port 8080...")
+	if err := s.Start(); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
+	}
+}
+
+// runDemo runs the demo
+func runDemo(documentPath, certificatePath, certificatePassword string) {
 	// Create a blockchain instance
 	bc := blockchain.NewBlockchain(4) // Difficulty level 4
 

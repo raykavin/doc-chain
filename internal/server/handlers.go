@@ -21,7 +21,7 @@ type WalletHandlers struct {
 func (h *WalletHandlers) CreateWallet(w http.ResponseWriter, r *http.Request) {
 	wallet, err := crypto.NewWallet()
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to create wallet: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Falha ao criar carteira: "+err.Error())
 		return
 	}
 
@@ -30,14 +30,18 @@ func (h *WalletHandlers) CreateWallet(w http.ResponseWriter, r *http.Request) {
 
 	privateKeyPEM, err := wallet.ExportPrivateKey()
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to export private key: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Falha ao exportar chave privada: "+err.Error())
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusCreated, "Wallet created successfully", map[string]string{
-		"id":         id,
-		"publicKey":  id,
-		"privateKey": privateKeyPEM,
+	RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
+		"success": true,
+		"message": "Carteira criada com sucesso",
+		"data": map[string]string{
+			"id":         id,
+			"publicKey":  id,
+			"privateKey": privateKeyPEM,
+		},
 	})
 }
 
@@ -48,13 +52,17 @@ func (h *WalletHandlers) GetWallet(w http.ResponseWriter, r *http.Request) {
 
 	wallet, exists := h.server.Wallets[id]
 	if !exists {
-		SendErrorResponse(w, http.StatusNotFound, "Wallet not found")
+		RespondWithError(w, http.StatusNotFound, "Carteira não encontrada")
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Wallet found", map[string]string{
-		"id":        id,
-		"publicKey": wallet.GetPublicKeyAsString(),
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Carteira encontrada",
+		"data": map[string]string{
+			"id":        id,
+			"publicKey": wallet.GetPublicKeyAsString(),
+		},
 	})
 }
 
@@ -67,14 +75,14 @@ type DocumentHandlers struct {
 func (h *DocumentHandlers) SignDocument(w http.ResponseWriter, r *http.Request) {
 	var req dto.DocumentRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid request body: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Requisição inválida: "+err.Error())
 		return
 	}
 
 	// Import the private key
 	privateKey, err := crypto.ImportPrivateKey(req.Key)
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, "Invalid private key: "+err.Error())
+		RespondWithError(w, http.StatusBadRequest, "Chave privada inválida: "+err.Error())
 		return
 	}
 
@@ -90,7 +98,7 @@ func (h *DocumentHandlers) SignDocument(w http.ResponseWriter, r *http.Request) 
 	// Sign the document hash
 	signature, err := tempWallet.SignString(contentHash)
 	if err != nil {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to sign document: "+err.Error())
+		RespondWithError(w, http.StatusInternalServerError, "Falha ao assinar documento: "+err.Error())
 		return
 	}
 
@@ -103,14 +111,18 @@ func (h *DocumentHandlers) SignDocument(w http.ResponseWriter, r *http.Request) 
 
 	// Add the document to the blockchain
 	if !h.server.Blockchain.AddDocument(doc) {
-		SendErrorResponse(w, http.StatusInternalServerError, "Failed to add document to blockchain")
+		RespondWithError(w, http.StatusInternalServerError, "Falha ao adicionar documento à blockchain")
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusCreated, "Document signed and added to pending documents", map[string]string{
-		"documentId": doc.ID,
-		"signedBy":   doc.SignedBy,
-		"timestamp":  strconv.FormatInt(doc.Timestamp, 10),
+	RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
+		"success": true,
+		"message": "Documento assinado e adicionado aos documentos pendentes",
+		"data": map[string]string{
+			"documentId": doc.ID,
+			"signedBy":   doc.SignedBy,
+			"timestamp":  strconv.FormatInt(doc.Timestamp, 10),
+		},
 	})
 }
 
@@ -121,11 +133,15 @@ func (h *DocumentHandlers) GetDocument(w http.ResponseWriter, r *http.Request) {
 
 	doc := h.server.Blockchain.GetDocumentByID(id)
 	if doc == nil {
-		SendErrorResponse(w, http.StatusNotFound, "Document not found")
+		RespondWithError(w, http.StatusNotFound, "Documento não encontrado")
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Document found", doc)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Documento encontrado",
+		"data":    doc,
+	})
 }
 
 // VerifyDocument verifies a document's signature
@@ -135,17 +151,21 @@ func (h *DocumentHandlers) VerifyDocument(w http.ResponseWriter, r *http.Request
 
 	doc := h.server.Blockchain.GetDocumentByID(id)
 	if doc == nil {
-		SendErrorResponse(w, http.StatusNotFound, "Document not found")
+		RespondWithError(w, http.StatusNotFound, "Documento não encontrado")
 		return
 	}
 
 	isValid := blockchain.VerifyDocument(doc)
 
-	SendSuccessResponse(w, http.StatusOK, "Document verification completed", map[string]interface{}{
-		"documentId": doc.ID,
-		"isValid":    isValid,
-		"signedBy":   doc.SignedBy,
-		"timestamp":  doc.Timestamp,
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Verificação de documento concluída",
+		"data": map[string]interface{}{
+			"documentId": doc.ID,
+			"isValid":    isValid,
+			"signedBy":   doc.SignedBy,
+			"timestamp":  doc.Timestamp,
+		},
 	})
 }
 
@@ -158,11 +178,15 @@ type BlockchainHandlers struct {
 func (h *BlockchainHandlers) GetBlockchainInfo(w http.ResponseWriter, r *http.Request) {
 	bc := h.server.Blockchain
 
-	SendSuccessResponse(w, http.StatusOK, "Blockchain info retrieved", map[string]interface{}{
-		"blocks":      len(bc.Blocks),
-		"difficulty":  bc.Difficulty,
-		"pendingDocs": len(bc.PendingDocs),
-		"isValid":     bc.IsChainValid(),
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Informações da blockchain recuperadas",
+		"data": map[string]interface{}{
+			"blocks":      len(bc.Blocks),
+			"difficulty":  bc.Difficulty,
+			"pendingDocs": len(bc.PendingDocs),
+			"isValid":     bc.IsChainValid(),
+		},
 	})
 }
 
@@ -170,23 +194,31 @@ func (h *BlockchainHandlers) GetBlockchainInfo(w http.ResponseWriter, r *http.Re
 func (h *BlockchainHandlers) MineBlock(w http.ResponseWriter, r *http.Request) {
 	block, err := h.server.Blockchain.MineBlock()
 	if err != nil {
-		SendErrorResponse(w, http.StatusBadRequest, err.Error())
+		RespondWithError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusCreated, "Block mined successfully", map[string]interface{}{
-		"index":      block.Index,
-		"hash":       block.Hash,
-		"documents":  len(block.Documents),
-		"timestamp":  block.Timestamp,
-		"merkleRoot": block.MerkleRoot,
-		"nonce":      block.Nonce,
+	RespondWithJSON(w, http.StatusCreated, map[string]interface{}{
+		"success": true,
+		"message": "Bloco minerado com sucesso",
+		"data": map[string]interface{}{
+			"index":      block.Index,
+			"hash":       block.Hash,
+			"documents":  len(block.Documents),
+			"timestamp":  block.Timestamp,
+			"merkleRoot": block.MerkleRoot,
+			"nonce":      block.Nonce,
+		},
 	})
 }
 
 // GetBlocks gets all blocks in the blockchain
 func (h *BlockchainHandlers) GetBlocks(w http.ResponseWriter, r *http.Request) {
-	SendSuccessResponse(w, http.StatusOK, "Blocks retrieved", h.server.Blockchain.Blocks)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Blocos recuperados",
+		"data":    h.server.Blockchain.Blocks,
+	})
 }
 
 // GetBlockByHash gets a block by its hash
@@ -196,23 +228,35 @@ func (h *BlockchainHandlers) GetBlockByHash(w http.ResponseWriter, r *http.Reque
 
 	block := h.server.Blockchain.GetBlockByHash(hash)
 	if block == nil {
-		SendErrorResponse(w, http.StatusNotFound, "Block not found")
+		RespondWithError(w, http.StatusNotFound, "Bloco não encontrado")
 		return
 	}
 
-	SendSuccessResponse(w, http.StatusOK, "Block found", block)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Bloco encontrado",
+		"data":    block,
+	})
 }
 
 // GetPendingDocuments gets all pending documents
 func (h *BlockchainHandlers) GetPendingDocuments(w http.ResponseWriter, r *http.Request) {
-	SendSuccessResponse(w, http.StatusOK, "Pending documents retrieved", h.server.Blockchain.PendingDocs)
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Documentos pendentes recuperados",
+		"data":    h.server.Blockchain.PendingDocs,
+	})
 }
 
 // ValidateChain validates the entire blockchain
 func (h *BlockchainHandlers) ValidateChain(w http.ResponseWriter, r *http.Request) {
 	isValid := h.server.Blockchain.IsChainValid()
 
-	SendSuccessResponse(w, http.StatusOK, "Blockchain validation completed", map[string]bool{
-		"isValid": isValid,
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Validação da blockchain concluída",
+		"data": map[string]bool{
+			"isValid": isValid,
+		},
 	})
 }

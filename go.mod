@@ -4,7 +4,9 @@ go 1.24.2
 
 require (
 	github.com/digitorus/timestamp v0.0.0-20231217203849-220c5c2851b7
+	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
 	go.mozilla.org/pkcs7 v0.9.0
