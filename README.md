@@ -202,6 +202,27 @@ Response:
 ./blockchain-cli blockchain validate
 ```
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🤝 Contributing
+
+Contributions to BackNRun are welcome! Here are some ways you can contribute:
+
+1. Report bugs and suggest features by opening issues
+2. Submit pull requests with bug fixes or new features
+3. Improve documentation
+4. Share your custom strategies with the community
+
+## 📄License
+
+MIT License © [Raykavin Meireles](https://github.com/raykavin)
+
+BackNRun is licensed under the MIT License. See the [LICENSE](LICENSE.md) file for details.
+
+---
+## 📬 Contact
+
+Feel free to reach out for support or collaboration:  
+**Email**: [raykavin.meireles@gmail.com](mailto:raykavin.meireles@gmail.com)  
+**GitHub**: [@raykavin](https://github.com/raykavin)\
+**LinkedIn**: [@raykavin.dev](https://www.linkedin.com/in/raykavin-dev)\
+**Instagram**: [@raykavin.dev](https://www.instagram.com/raykavin.dev)
