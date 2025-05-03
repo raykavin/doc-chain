@@ -55,8 +55,8 @@ The application follows clean architecture and SOLID principles with a clear sep
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/github.com/raykavin/docchain.git
-   cd github.com/raykavin/docchain
+   git clone https://github.com/raykavin/doc-chain.git
+   cd doc-chain/
    ```
 
 2. Install dependencies:
