@@ -53,7 +53,7 @@ The application consists of:
 
 1. Clone the repository:
    ```
-   git clone https://github.com/raykavin/docchain.git
+   git clone https://github.com/raykavin/dochain-go.git
    cd docchain
    ```
 
